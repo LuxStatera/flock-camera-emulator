@@ -7,7 +7,7 @@ A test tool that emulates Flock Safety camera WiFi traffic using an ESP32. Sends
 Real Flock Safety cameras periodically send 802.11 wildcard probe requests (empty SSID) as part of their normal operation. This emulator replicates that behavior by crafting raw probe request frames using the ESP32's `esp_wifi_80211_tx()` function, with the source MAC set to a known Flock OUI prefix.
 
 Each button press:
-1. Picks the next Flock OUI from the list of 31 known prefixes
+1. Picks the next Flock OUI from the list of 32 known prefixes
 2. Generates a random device MAC with that OUI prefix
 3. Sends 5 wildcard probe frames on each of channels 1, 6, and 11
 4. Cycles to the next OUI for the next press
@@ -62,7 +62,7 @@ Each press uses a different OUI prefix and random device bytes, so the detector 
 
 ```
 === Flock Camera Emulator (Test Tool) ===
-Loaded 31 Flock OUI prefixes
+Loaded 32 Flock OUI prefixes
 Press button to send a wildcard probe request
 Ready. Waiting for button press...
 Sending wildcard probe as 70:C9:4E:A3:1F:82

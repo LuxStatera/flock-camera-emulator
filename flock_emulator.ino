@@ -47,6 +47,7 @@ static const uint8_t FLOCK_OUIS[][3] = {
   {0x48, 0x27, 0xEA},
   {0xA4, 0xCF, 0x12},
   {0x82, 0x6B, 0xF2},
+  {0xB4, 0x1E, 0x52},  // registered Flock Safety OUI
 };
 
 static const int NUM_OUIS = sizeof(FLOCK_OUIS) / sizeof(FLOCK_OUIS[0]);
