@@ -1,6 +1,6 @@
 # Flock Camera Emulator
 
-A test tool that emulates Flock Safety camera WiFi traffic using an ESP32. Sends wildcard probe requests with known Flock Safety OUI prefixes — the exact signature that Flock detector devices look for. Built for testing and validating [Flock Hunter](https://github.com/LuxStatera/flock-hunter-cyd) and similar detection tools.
+A test tool that emulates Flock Safety camera WiFi traffic using an ESP32. Sends wildcard probe requests with known Flock Safety OUI prefixes — the exact signature that Flock detector devices look for. Built for testing and validating Flock Hunter detectors ([CYD version](https://github.com/LuxStatera/flock-hunter-cyd) and [D1 Mini version](https://github.com/LuxStatera/flock-hunter-d1-mini)) and similar detection tools.
 
 ## How It Works
 
@@ -21,7 +21,7 @@ Any ESP32 board with a button:
 | Part | Pin | Notes |
 |------|-----|-------|
 | ESP32 (any variant) | — | ESP32, ESP32-S3, ESP32-C3, etc. |
-| Momentary button | GPIO 13 → GND | Uses internal pull-up |
+| Momentary button | (+) GPIO 13, (-) GND | Uses internal pull-up |
 
 That's it — no display, no buzzer, just a board and a button.
 
