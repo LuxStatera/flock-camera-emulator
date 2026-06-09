@@ -1,6 +1,6 @@
 # Flock Camera Emulator
 
-A test tool that emulates Flock Safety camera WiFi traffic using an ESP32. Sends wildcard probe requests with known Flock Safety OUI prefixes — the exact signature that Flock detector devices look for. Built for testing and validating Flock Hunter detectors ([CYD version](https://github.com/LuxStatera/flock-hunter-cyd) and [D1 Mini version](https://github.com/LuxStatera/flock-hunter-d1-mini)) and similar detection tools.
+A test tool that emulates Flock Safety camera WiFi traffic using an ESP32. Sends wildcard probe requests with known Flock Safety OUI prefixes — the exact signature that Flock detector devices look for. Built for testing and validating Flock Hunter detectors ([CYD version](https://github.com/LuxStatera/flock-hunter-cyd-wifi) and [D1 Mini version](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)) and similar detection tools.
 
 ## How It Works
 
@@ -72,8 +72,8 @@ Sending wildcard probe as D8:F3:BC:44:92:CB
 
 ## Companion Projects
 
-- **[Flock Hunter CYD](https://github.com/LuxStatera/flock-hunter-cyd)** — ESP32 CYD detector with TFT display, SD card PCAP capture
-- **[Flock Hunter D1 Mini](https://github.com/LuxStatera/flock-hunter-d1-mini)** — ESP8266 detector with OLED display and piezo buzzer
+- **[Flock Hunter CYD](https://github.com/LuxStatera/flock-hunter-cyd-wifi)** — ESP32 CYD detector with TFT display, SD card PCAP capture
+- **[Flock Hunter D1 Mini](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)** — ESP8266 detector with OLED display and piezo buzzer
 
 ## Credits
 
