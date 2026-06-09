@@ -75,6 +75,13 @@ Sending wildcard probe as D8:F3:BC:44:92:CB
 - **[Flock Hunter CYD](https://github.com/LuxStatera/flock-hunter-cyd-wifi)** — ESP32 CYD detector with TFT display, SD card PCAP capture
 - **[Flock Hunter D1 Mini](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)** — ESP8266 detector with OLED display and piezo buzzer
 
+## Flock Hunter Family
+
+- **[Flock Hunter CYD WiFi](https://github.com/LuxStatera/flock-hunter-cyd-wifi)** — WiFi detector with 32 OUI prefixes + PCAP capture
+- **[Flock Hunter CYD BLE](https://github.com/LuxStatera/flock-hunter-cyd-ble)** — Bluetooth detector scanning for manufacturer ID 0x09C8
+- **[Flock Hunter D1 Mini WiFi](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)** — Compact WiFi detector with OLED display + piezo buzzer
+- **[Flock Camera Emulator](https://github.com/LuxStatera/flock-camera-emulator)** — ESP32 test tool for validating detectors (this project)
+
 ## Credits
 
 OUI prefixes from the original **[Flock You](https://github.com/colonelpanichacks/flock-you)** project by **[colonelpanichacks](https://github.com/colonelpanichacks)**.
