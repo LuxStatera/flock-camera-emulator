@@ -1,51 +1,68 @@
 # Flock Camera Emulator
 
-A test tool that emulates Flock Safety camera WiFi traffic using an ESP32. Sends wildcard probe requests with known Flock Safety OUI prefixes — the exact signature that Flock detector devices look for. Built for testing and validating Flock Hunter detectors ([CYD version](https://github.com/LuxStatera/flock-hunter-cyd-wifi) and [D1 Mini version](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)) and similar detection tools.
+A test tool that emulates Flock Safety camera WiFi and BLE traffic using an ESP32. Sends wildcard probe requests and BLE advertisements with known Flock Safety OUI prefixes and manufacturer ID — the exact signatures that Flock detector devices look for. Built for testing and validating Flock Hunter detectors ([CYD WiFi](https://github.com/LuxStatera/flock-hunter-cyd-wifi), [CYD BLE](https://github.com/LuxStatera/flock-hunter-cyd-ble), and [D1 Mini](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)) and similar detection tools.
 
 ## How It Works
 
-Real Flock Safety cameras periodically send 802.11 wildcard probe requests (empty SSID) as part of their normal operation. This emulator replicates that behavior by crafting raw probe request frames using the ESP32's `esp_wifi_80211_tx()` function, with the source MAC set to a known Flock OUI prefix.
+Real Flock Safety cameras emit two detectable signals:
 
-Each button press:
-1. Picks the next Flock OUI from the list of 32 known prefixes
-2. Generates a random device MAC with that OUI prefix
-3. Sends 5 wildcard probe frames on each of channels 1, 6, and 11
-4. Cycles to the next OUI for the next press
+**WiFi (Button 1 — D13):** Cameras periodically send 802.11 wildcard probe requests (empty SSID) as part of their normal operation. This emulator replicates that by crafting raw probe request frames using `esp_wifi_80211_tx()`, with the source MAC set to a known Flock OUI prefix. Sends 5 frames each on channels 1, 6, and 11.
 
-This triggers the `WILD_PROBE` detection method (highest confidence) on any Flock detector in range.
+**BLE (Button 2 — D32):** Cameras also broadcast BLE advertisements with manufacturer ID `0x09C8` (XUNTONG). This emulator sends BLE advertisements with that manufacturer ID and Flock OUI data in the payload. Advertises for 3 seconds per press.
+
+Each button press cycles to the next OUI from the list of 31 known prefixes, with random device bytes — like driving past multiple cameras.
 
 ## Hardware
 
-Any ESP32 board with a button:
+ESP32 WROOM-32 dev board with two buttons:
 
-| Part | Pin | Notes |
-|------|-----|-------|
-| ESP32 (any variant) | — | ESP32, ESP32-S3, ESP32-C3, etc. |
-| Momentary button | (+) GPIO 13, (-) GND | Uses internal pull-up |
+| Part | Pin | Function |
+|------|-----|----------|
+| ESP32 WROOM-32 | — | Dev board with WiFi + BLE |
+| Button 1 (WiFi) | D13 → GND | Sends wildcard probe requests |
+| Button 2 (BLE) | D32 → GND | Sends BLE advertisements |
 
-That's it — no display, no buzzer, just a board and a button.
+Buttons are simple two-pin momentary push buttons — no polarity, either wire to either terminal. Uses internal pull-ups, no resistors needed.
 
-> **Changing the button pin:** Edit `#define BUTTON_PIN 13` at the top of the sketch.
+> **Changing pins:** Edit `#define WIFI_BUTTON_PIN` and `#define BLE_BUTTON_PIN` at the top of the sketch.
 
 ## Building & Flashing
+
+**Important:** This sketch requires the `no_ota` partition scheme due to BLE stack size. Without it, compilation will fail with "Sketch too big."
 
 ### Arduino IDE
 
 1. Install [Arduino IDE](https://www.arduino.cc/en/software)
-2. Add ESP32 board support: **File → Preferences → Additional Board Manager URLs:**
+2. Add ESP32 board support: **File > Preferences > Additional Board Manager URLs:**
    ```
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
-3. **Tools → Board → Boards Manager** → search "esp32" → install **ESP32 by Espressif Systems**
+3. **Tools > Board > Boards Manager** > search "esp32" > install **ESP32 by Espressif Systems**
 4. Open `flock_emulator.ino`
-5. **Tools → Board:** Select your ESP32 board (e.g. `ESP32 Dev Module`, `ESP32-S3 Dev Module`)
-6. **Tools → Port:** Select your board's serial port
-7. Click **Upload**
+5. **Tools > Board:** Select `ESP32 Dev Module`
+6. **Tools > Partition Scheme:** Select `No OTA (2MB APP/2MB SPIFFS)`
+7. **Tools > Port:** Select your board's serial port
+8. Click **Upload**
+
+### Arduino CLI
+
+```bash
+arduino-cli compile --fqbn esp32:esp32:esp32:PartitionScheme=no_ota flock_emulator
+arduino-cli upload --fqbn esp32:esp32:esp32:PartitionScheme=no_ota --port /dev/cu.usbserial-0001 flock_emulator
+```
 
 ### PlatformIO
 
+```ini
+; platformio.ini
+[env:esp32]
+platform = espressif32
+board = esp32dev
+board_build.partitions = no_ota.csv
+framework = arduino
+```
+
 ```bash
-# Create platformio.ini with your board, then:
 pio run -t upload
 ```
 
@@ -53,29 +70,42 @@ pio run -t upload
 
 1. Power on the ESP32
 2. Open Serial Monitor at 115200 baud (optional — shows what's being sent)
-3. Press the button to send a Flock camera probe
-4. Your Flock detector should trigger a detection alert
-
-Each press uses a different OUI prefix and random device bytes, so the detector sees unique MAC addresses — just like driving past multiple cameras.
+3. Press **D13 button** to send a WiFi probe request
+4. Press **D32 button** to send a BLE advertisement
+5. Your Flock detector should trigger a detection alert
 
 ## Serial Output
 
 ```
-=== Flock Camera Emulator (Test Tool) ===
-Loaded 32 Flock OUI prefixes
-Press button to send a wildcard probe request
+=== Flock Camera Emulator (WiFi + BLE) ===
+Loaded 31 Flock OUI prefixes
+D13 = WiFi probe request
+D32 = BLE advertisement
+[BLE] btStart: OK
 Ready. Waiting for button press...
-Sending wildcard probe as 70:C9:4E:A3:1F:82
-Sending wildcard probe as 3C:91:80:5D:E7:19
-Sending wildcard probe as D8:F3:BC:44:92:CB
+[WiFi] Probe as 70:C9:4E:A3:1F:82
+[WiFi] Probe as 3C:91:80:5D:E7:19
+[BLE] bluedroid init: ESP_OK
+[BLE] bluedroid enable: ESP_OK
+[BLE] Initialized
+[BLE] set_rand_addr: ESP_OK
+[BLE] config_adv_data_raw: ESP_OK
+[BLE] start_advertising: ESP_OK
+[BLE] Advertising started OK
+[BLE] Broadcasting OUI 70:C9:4E  addr=F0:C9:4E:A9:6C:9C  mfg=0x09C8
+[BLE] Stopped
 ```
 
+## Detection Methods Triggered
+
+| Button | Detector Alert | Description |
+|--------|---------------|-------------|
+| D13 (WiFi) | `ALERT_WILDCARD_PROBE` | Management frame type 0/subtype 4 with matching OUI and empty SSID |
+| D13 (WiFi) | `ALERT_OUI_ADDR2` | Transmitter address matches known Flock OUI |
+| D32 (BLE) | `ble_oui` | BLE MAC address OUI match |
+| D32 (BLE) | `ble_manufacturer_id` | Manufacturer ID `0x09C8` in advertisement data |
+
 ## Companion Projects
-
-- **[Flock Hunter CYD](https://github.com/LuxStatera/flock-hunter-cyd-wifi)** — ESP32 CYD detector with TFT display, SD card PCAP capture
-- **[Flock Hunter D1 Mini](https://github.com/LuxStatera/flock-hunter-d1-mini-wifi)** — ESP8266 detector with OLED display and piezo buzzer
-
-## Flock Hunter Family
 
 - **[Flock Hunter CYD WiFi](https://github.com/LuxStatera/flock-hunter-cyd-wifi)** — WiFi detector with 32 OUI prefixes + PCAP capture
 - **[Flock Hunter CYD BLE](https://github.com/LuxStatera/flock-hunter-cyd-ble)** — Bluetooth detector scanning for manufacturer ID 0x09C8
@@ -84,10 +114,10 @@ Sending wildcard probe as D8:F3:BC:44:92:CB
 
 ## Credits
 
-OUI prefixes from the original **[Flock You](https://github.com/colonelpanichacks/flock-you)** project by **[colonelpanichacks](https://github.com/colonelpanichacks)**.
+OUI prefixes and BLE manufacturer ID from the original **[Flock You](https://github.com/colonelpanichacks/flock-you)** project by **[colonelpanichacks](https://github.com/colonelpanichacks)**. BLE manufacturer ID `0x09C8` research credit to **Will Greenberg** ([@wgreenberg](https://github.com/wgreenberg)).
 
 This firmware and README were written with **[Claude](https://claude.ai)** by Anthropic.
 
 ## Legal Disclaimer
 
-This tool is for **testing Flock detector devices only**. It does not interact with, interfere with, or connect to any real Flock Safety infrastructure. It transmits standard 802.11 probe request frames — the same type of frame every WiFi device sends when scanning for networks. Use responsibly and check your local laws regarding WiFi frame transmission.
+This tool is for **testing Flock detector devices only**. It does not interact with, interfere with, or connect to any real Flock Safety infrastructure. It transmits standard 802.11 probe request frames and BLE advertisements — the same types of transmissions every WiFi and Bluetooth device sends. Use responsibly and check your local laws regarding wireless transmission.
