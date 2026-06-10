@@ -14,15 +14,20 @@ Each button press cycles to the next OUI from the list of 31 known prefixes, wit
 
 ## Hardware
 
-ESP32 WROOM-32 dev board with two buttons:
+- ESP32 WROOM-32 dev board
+- 2x momentary push buttons (simple two-pin, no polarity)
 
-| Part | Pin | Function |
-|------|-----|----------|
-| ESP32 WROOM-32 | — | Dev board with WiFi + BLE |
-| Button 1 (WiFi) | D13 → GND | Sends wildcard probe requests |
-| Button 2 (BLE) | D32 → GND | Sends BLE advertisements |
+### Wiring Diagram
 
-Buttons are simple two-pin momentary push buttons — no polarity, either wire to either terminal. Uses internal pull-ups, no resistors needed.
+```
+ESP32 WROOM-32       Component
+──────────────       ─────────
+D13 (GPIO 13)   →    WiFi Button (+)
+D32 (GPIO 32)   →    BLE Button (+)
+GND             →    WiFi Button (-) + BLE Button (-)
+```
+
+No external resistors needed — uses internal pull-ups. Buttons have no polarity, either terminal works for either wire.
 
 > **Changing pins:** Edit `#define WIFI_BUTTON_PIN` and `#define BLE_BUTTON_PIN` at the top of the sketch.
 
