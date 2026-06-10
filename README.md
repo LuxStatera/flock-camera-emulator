@@ -105,10 +105,9 @@ Ready. Waiting for button press...
 
 | Button | Detector Alert | Description |
 |--------|---------------|-------------|
-| D13 (WiFi) | `ALERT_WILDCARD_PROBE` | Management frame type 0/subtype 4 with matching OUI and empty SSID |
-| D13 (WiFi) | `ALERT_OUI_ADDR2` | Transmitter address matches known Flock OUI |
-| D32 (BLE) | `ble_oui` | BLE MAC address OUI match |
-| D32 (BLE) | `ble_manufacturer_id` | Manufacturer ID `0x09C8` in advertisement data |
+| D13 (WiFi) | `WILD_PROBE` | Management frame type 0/subtype 4 with matching OUI and empty SSID |
+| D13 (WiFi) | `OUI_TX` | Transmitter address matches known Flock OUI |
+| D32 (BLE) | Manufacturer ID match | BLE advertisement contains manufacturer ID `0x09C8` |
 
 ## Companion Projects
 
