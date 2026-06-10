@@ -1,7 +1,7 @@
 /*
  * Flock Camera Emulator - Test Tool
  * Button 1 (D13): Sends WiFi wildcard probe requests with Flock OUI
- * Button 2 (D14): Sends BLE advertisements with Flock OUI + manufacturer ID 0x09C8
+ * Button 2 (D32): Sends BLE advertisements with Flock OUI + manufacturer ID 0x09C8
  * For testing flock detector devices only.
  *
  * Hardware: ESP32 WROOM-32, two buttons
@@ -301,7 +301,7 @@ void loop() {
     }
   }
 
-  // BLE button (D14)
+  // BLE button (D32)
   if (digitalRead(BLE_BUTTON_PIN) == LOW) {
     if (now - last_ble_press > DEBOUNCE_MS) {
       last_ble_press = now;
