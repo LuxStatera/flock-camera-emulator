@@ -10,7 +10,7 @@ Real Flock Safety cameras emit two detectable signals:
 
 **BLE (Button 2 — D32):** Cameras also broadcast BLE advertisements with manufacturer ID `0x09C8` (XUNTONG). This emulator sends BLE advertisements with that manufacturer ID and Flock OUI data in the payload. Advertises for 3 seconds per press.
 
-Each button press cycles to the next OUI from the list of 31 known prefixes, with random device bytes — like driving past multiple cameras.
+Each button press cycles to the next OUI from the list of 32 known prefixes, with random device bytes — like driving past multiple cameras.
 
 ## Hardware
 
@@ -83,7 +83,7 @@ pio run -t upload
 
 ```
 === Flock Camera Emulator (WiFi + BLE) ===
-Loaded 31 Flock OUI prefixes
+Loaded 32 Flock OUI prefixes
 D13 = WiFi probe request
 D32 = BLE advertisement
 [BLE] btStart: OK
